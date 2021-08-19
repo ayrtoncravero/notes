@@ -1,22 +1,22 @@
 const express = require('express');
-const morgan = require('morga'); //middleware
+const morgan = require('morgan'); //middleware
 
-//Inicializaciones
-const  app = express();
+//Initializations
+const app = express();
 
-configuraciones
-app.set('port', process.envPORT || 3000);
+//Settings
+app.set('port', process.env.PORT || 3000);
 
-//middlewares
+//Middlewares
 app.use(morgan('dev'));
 
-//variables globales
+//Global variables
 
-//rutas
+//Routs
 
-//public
+//Public
 
-//starting server
+//Starting server
 app.listen(app.get('port'), () => {
-   console.log('Servidor disponible en localhost:', app.get('port'));
+   console.log('Servidor en:', app.get('port'));
 });
