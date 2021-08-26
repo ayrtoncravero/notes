@@ -25,6 +25,14 @@ body {
     padding: 0;
 }
 
+.mb-1 {
+    text-shadow: 2px 2px 2px black;
+}
+
+.mb-5 {
+    text-shadow: 2px 2px 2px black;
+}
+
 @media (min-width: 992px)  {
     .masthead h1 {
         font-size: 5.5rem;
