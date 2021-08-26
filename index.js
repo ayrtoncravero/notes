@@ -1,5 +1,5 @@
 const express = require('express');
-const morgan = require('morgan'); //middleware
+const morgan = require('morgan');
 const exphbs = require('express-handlebars');
 const path = require('path');
 const flash = require('connect-flash');
@@ -9,25 +9,15 @@ const passport = require('passport');
 
 const { database } = require('./keys');
 
-//Initializations
 const app = express();
 require('../notes/src/lib/passport');
 
-//Settings
 app.set('port', process.env.PORT || 3000);
 
 app.set('views', path.join(__dirname, 'views'));
-/*app.engine('.hbs', exphbs({
-   defaultLayout: 'main.handlebars',
-   layoutsDir: path.join(app.get('views'), 'layouts'),
-   partialsDir: path.join(app.get('views'), 'partials'),
-   extname: '.hbs',
-   helpers: require('./src/lib/handlebars')
-}));*/
 app.engine('handlebars', exphbs())
 app.set('view engine', 'handlebars');
 
-//Middlewares
 app.use(session({
    secret: 'irtonmysqlnodesession',
    resave: false,
@@ -41,7 +31,6 @@ app.use(express.json());
 app.use(passport.initialize());
 app.use(passport.session());
 
-//Global variables
 app.use((req, res, next) => {
    app.locals.success = req.flash('success');
    app.locals.message = req.flash('message');
@@ -49,15 +38,12 @@ app.use((req, res, next) => {
    next();
 });
 
-//Routs
 app.use(require('./src/routes'))
 app.use(require('./src/routes/authentication'));
 app.use('/links', require('./src/routes/links'));
 
-//Public
 app.use(express.static(path.join(__dirname, 'public')));
 
-//Starting server
 app.listen(app.get('port'), () => {
    console.log('Servidor disponible en localhost:', app.get('port'));
 });
