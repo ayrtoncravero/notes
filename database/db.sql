@@ -1,5 +1,7 @@
+-- Create database --
 CREATE DATABASE notes;
 
+-- Select database --
 USE notes;
 
 -- Users table --
