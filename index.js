@@ -2,41 +2,62 @@ const express = require('express');
 const morgan = require('morgan'); //middleware
 const exphbs = require('express-handlebars');
 const path = require('path');
+const flash = require('connect-flash');
+const session = require('express-session');
+const mysqlStore = require('express-mysql-session');
+const passport = require('passport');
+
+const { database } = require('./keys');
 
 //Initializations
 const app = express();
+require('../notes/src/lib/passport');
 
 //Settings
 app.set('port', process.env.PORT || 3000);
+
 app.set('views', path.join(__dirname, 'views'));
-app.engine('.hbs', exphbs({
-   defaultLayout: 'main',
+/*app.engine('.hbs', exphbs({
+   defaultLayout: 'main.handlebars',
    layoutsDir: path.join(app.get('views'), 'layouts'),
    partialsDir: path.join(app.get('views'), 'partials'),
    extname: '.hbs',
-   helpers: require('./src/lib/handlebars'),
-}));
-app.set('view engine', '.hbs');
+   helpers: require('./src/lib/handlebars')
+}));*/
+app.engine('handlebars', exphbs())
+app.set('view engine', 'handlebars');
 
 //Middlewares
+app.use(session({
+   secret: 'irtonmysqlnodesession',
+   resave: false,
+   saveUninitialized: false,
+   store: new mysqlStore(database)
+}));
+app.use(flash());
 app.use(morgan('dev'));
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Global variables
 app.use((req, res, next) => {
+   app.locals.success = req.flash('success');
+   app.locals.message = req.flash('message');
+   app.locals.user = req.user;
    next();
 });
 
 //Routs
 app.use(require('./src/routes'))
 app.use(require('./src/routes/authentication'));
-app.use('./link', require('./src/routes/links'));
+app.use('/links', require('./src/routes/links'));
 
 //Public
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Starting server
 app.listen(app.get('port'), () => {
-   console.log('Servidor abiero en localhost:', app.get('port'));
+   console.log('Servidor disponible en localhost:', app.get('port'));
 });
